@@ -1,0 +1,97 @@
+node_modules
+dist
+.DS_Store
+server/public
+vite.config.ts.*
+*.tar.gz
+
+# Dependency directories
+node_modules/
+bower_components/
+
+.git
+
+# Next.js build output
+.next/
+out/
+
+# Production build
+build/
+dist/
+dist-ssr/
+
+# Package manager files
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+.pnp.*
+.pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Testing
+coverage/
+*.lcov
+
+# Logs
+logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Editor and IDE files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+
+# Miscellaneous files
+*.tgz
+*.gz
+*.zip
+*.rar
+*.tar
+*.tar.gz
+*.bak
+*.tmp
+*.sw?
+*.sublime*
+*.pem
+
+# Image/media caches
+*.psd
+*.sketch
+*.ai
+*.png
+*.jpg
+*.jpeg
+
+# Vercel/Netlify
+.vercel
+.netlify
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Snapshots (testing)
+__snapshots__/
+
+# Custom: ignore .ra.gz files
+*.ra.gz
+
