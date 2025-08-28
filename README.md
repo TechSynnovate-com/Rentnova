@@ -298,5 +298,6 @@ RentNova is a comprehensive Next.js rental management platform built with indust
 - Admin dashboard for property moderation
 
 ## User Preferences
+Vercel Deployment code added
 
 Preferred communication style: Simple, everyday language.
