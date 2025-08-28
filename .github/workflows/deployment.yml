@@ -1,0 +1,53 @@
+name: Deploy to Vercel
+
+on:
+  pull_request:
+    branches:
+      - main 
+  workflow_dispatch: 
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+          
+      - name: Install dependencies
+        run: npm install  
+
+      - name: Run linter
+        run: npm run lint  || true
+  deploy:
+    needs: lint  # This ensures the deploy job runs only after lint job succeeds
+    runs-on: ubuntu-latest
+    environment:
+      name: production  # Optional: Can specify environment name here if needed
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: dev
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install  
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+        
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        
+      - name: Deploy Project to vercel
+        run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
