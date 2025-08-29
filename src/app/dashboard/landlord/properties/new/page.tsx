@@ -10,15 +10,6 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-
-const AMENITY_OPTIONS = [
-  'Air Conditioning', 'Parking', 'Swimming Pool', 'Gym/Fitness Center', 
-  'Security System', 'Balcony/Terrace', 'Garden', 'Elevator',
-  'Generator', 'Water Heater', 'Internet/WiFi', 'Cable TV',
-  'Furnished', 'Washing Machine', 'Dishwasher', 'Microwave',
-  'Refrigerator', 'Study Room', 'Guest Room', 'Storage Room',
-  'Playground', 'Shopping Center Nearby', 'School Nearby', 'Hospital Nearby'
-]
 import { Badge } from '@/components/ui/badge'
 import { motion } from 'framer-motion'
 import { 
@@ -157,32 +148,6 @@ export default function NewPropertyPage() {
         ? prev.amenities.filter(a => a !== amenity)
         : [...prev.amenities, amenity]
     }))
-  }
-
-  const addImage = () => {
-    const imageUrl = prompt('Enter image URL:')
-    if (imageUrl) {
-      setFormData(prev => ({
-        ...prev,
-        imageUrls: [...prev.imageUrls, imageUrl]
-      }))
-    }
-  }
-
-  const removeImage = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      imageUrls: prev.imageUrls.filter((_, i) => i !== index)
-    }))
-  }
-
-  const validateForm = () => {
-    if (!formData.propertyTitle || !formData.description || !formData.propertyType || 
-        !formData.address || !formData.city || !formData.state || !formData.price) {
-      toast.error('Please fill in all required fields')
-      return false
-    }
-    return true
   }
 
   const handleImageUpload = async (file: File) => {
