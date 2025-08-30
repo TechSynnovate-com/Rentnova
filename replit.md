@@ -36,4 +36,4 @@ RentNova is a comprehensive Next.js rental management platform designed to strea
 - Radix UI
 - React Hook Form
 - React Hot Toast
-- and many more
+- and many more...
