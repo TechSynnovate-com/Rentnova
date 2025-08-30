@@ -67,7 +67,7 @@ export default function QuickApplyButton({
         propertyId,
         propertyTitle,
         propertyPrice,
-        tenantId: user.uid,
+        tenantId: user.id,
         tenantEmail: user.email,
         tenantName: user.displayName,
         landlordId,
@@ -79,13 +79,13 @@ export default function QuickApplyButton({
         monthlyIncome: profile?.monthlyIncome || 0,
         employmentStatus: profile?.employmentStatus || '',
         jobTitle: profile?.jobTitle || '',
-        companyName: profile?.companyName || '',
-        preferredMoveInDate: profile?.moveInDate || '',
-        numberOfOccupants: profile?.numberOfOccupants || 1,
+        companyName: profile?.employer || '',
+        preferredMoveInDate: profile?.preferences?.moveInDate || '',
+        numberOfOccupants: 1, // Default value since not in profile
         emergencyContact: {
-          name: profile?.emergencyContactName || '',
-          phone: profile?.emergencyContactPhone || '',
-          relationship: profile?.emergencyContactRelationship || ''
+          name: profile?.emergencyContact?.name || '',
+          phone: profile?.emergencyContact?.phoneNumber || '',
+          relationship: profile?.emergencyContact?.relationship || ''
         },
         
         applicationMethod: 'quick_apply',
@@ -186,7 +186,7 @@ export default function QuickApplyButton({
               </Button>
               
               <Button 
-                onClick={handleApplyAnyway}
+                onClick={handleManualApply}
                 className="w-full justify-start"
                 variant="outline"
               >

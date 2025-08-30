@@ -14,8 +14,18 @@ import {
   Timestamp 
 } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
-import { FirebaseChatRoom, FirebaseChatMessage } from '@/types/firebase-schema'
+import { FirebaseMessage } from '@/types/firebase-schema'
 import { toast } from 'react-hot-toast'
+
+// Define chat room type
+interface ChatRoom {
+  id: string
+  participants: string[]
+  lastMessage?: string
+  lastMessageTime?: Date
+  propertyId?: string
+  unreadCount?: number
+}
 
 // Query Keys
 export const chatKeys = {
@@ -27,7 +37,7 @@ export const chatKeys = {
 
 // Real-time chat rooms for a user
 export function useChatRooms(userId: string) {
-  const [chatRooms, setChatRooms] = useState<FirebaseChatRoom[]>([])
+  const [chatRooms, setChatRooms] = useState<ChatRoom[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -49,7 +59,7 @@ export function useChatRooms(userId: string) {
         const rooms = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
-        })) as FirebaseChatRoom[]
+        })) as ChatRoom[]
         
         setChatRooms(rooms)
         setLoading(false)
@@ -70,7 +80,7 @@ export function useChatRooms(userId: string) {
 
 // Real-time messages for a chat room
 export function useChatMessages(roomId: string) {
-  const [messages, setMessages] = useState<FirebaseChatMessage[]>([])
+  const [messages, setMessages] = useState<FirebaseMessage[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -91,7 +101,7 @@ export function useChatMessages(roomId: string) {
         const msgs = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
-        })) as FirebaseChatMessage[]
+        })) as FirebaseMessage[]
         
         setMessages(msgs)
         setLoading(false)
@@ -180,7 +190,7 @@ export function useCreateChatRoom() {
       
       const existingRooms = await getDocs(existingRoomQuery)
       
-      if (!existingRooms.empty) {
+      if (!existingRooms.empty && existingRooms.docs[0]) {
         return existingRooms.docs[0].id
       }
 

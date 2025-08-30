@@ -1,5 +1,20 @@
 'use client'
 
+/**
+ * Tenant Maintenance Request Management
+ * Interface for tenants to submit and track maintenance requests
+ * 
+ * Features:
+ * - New request submission with photo upload
+ * - Request tracking with status updates
+ * - Priority level assignment
+ * - Communication with landlord/service providers
+ * - Request history and filtering
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
 import React, { useState } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
@@ -11,6 +26,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import {
   Plus,
   Wrench,
@@ -169,7 +185,7 @@ export default function MaintenancePage() {
     // Mock image upload - in real app, this would upload to Firebase Storage
     return new Promise<string>((resolve) => {
       setTimeout(() => {
-        const mockUrl = `https://storage.firebase.com/maintenance/${user?.uid}/${Date.now()}_${file.name}`
+        const mockUrl = `https://storage.firebase.com/maintenance/${user?.id}/${Date.now()}_${file.name}`
         resolve(mockUrl)
       }, 1000)
     })
@@ -203,7 +219,7 @@ export default function MaintenancePage() {
     try {
       const requestData = {
         ...newRequest,
-        tenantId: user?.uid,
+        tenantId: user?.id,
         propertyId: 'current_property_id', // This would come from user's current property
         propertyTitle: '2-Bedroom Apartment in Victoria Island', // This would come from property data
         landlordId: 'landlord_id', // This would come from property data
@@ -348,7 +364,7 @@ export default function MaintenancePage() {
                       <div className="grid grid-cols-3 gap-4">
                         {newRequest.images.map((image, index) => (
                           <div key={index} className="relative">
-                            <img src={image} alt={`Upload ${index + 1}`} className="w-full h-20 object-cover rounded" />
+                            <Image src={image} alt={`Upload ${index + 1}`} width={300} height={80} className="w-full h-20 object-cover rounded" />
                             <Button
                               size="sm"
                               variant="outline"
@@ -507,10 +523,12 @@ export default function MaintenancePage() {
                         <h4 className="font-medium text-gray-900 mb-2">Photos:</h4>
                         <div className="flex space-x-2">
                           {request.images.map((image, index) => (
-                            <img
+                            <Image
                               key={index}
                               src={image}
                               alt={`Issue photo ${index + 1}`}
+                              width={64}
+                              height={64}
                               className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80"
                             />
                           ))}

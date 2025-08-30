@@ -37,7 +37,7 @@ export function useUserProfile(userId: string, userType: 'tenant' | 'landlord') 
       return {
         uid: docSnap.id,
         ...docSnap.data()
-      } as FirebaseTenant | FirebaseLandlord
+      } as unknown as FirebaseTenant | FirebaseLandlord
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -60,7 +60,7 @@ export function useTenant(tenantId: string) {
       return {
         uid: docSnap.id,
         ...docSnap.data()
-      } as FirebaseTenant
+      } as unknown as FirebaseTenant
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -83,7 +83,7 @@ export function useLandlord(landlordId: string) {
       return {
         uid: docSnap.id,
         ...docSnap.data()
-      } as FirebaseLandlord
+      } as unknown as FirebaseLandlord
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes

@@ -236,13 +236,13 @@ export async function analyzeCollection(collectionName: string) {
     console.log(`Total documents: ${snapshot.size}`)
     console.log('Fields found:')
     Array.from(allFields).sort().forEach(field => {
-      const types = Array.from(fieldTypes[field]).join(', ')
+      const types = Array.from(fieldTypes[field] || []).join(', ')
       console.log(`  - ${field}: ${types}`)
     })
     
     // Show first document as example
     console.log('\nFirst document example:')
-    console.log(JSON.stringify(snapshot.docs[0].data(), null, 2))
+    console.log(JSON.stringify(snapshot.docs[0]?.data(), null, 2))
     
   } catch (error) {
     console.error(`Error analyzing ${collectionName}:`, error)

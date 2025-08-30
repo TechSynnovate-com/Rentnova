@@ -1,5 +1,20 @@
 'use client'
 
+/**
+ * Universal Dashboard Landing Page
+ * Smart dashboard that adapts to user role (tenant, landlord, admin)
+ * 
+ * Features:
+ * - Role-based content rendering
+ * - Property recommendations for tenants
+ * - Portfolio overview for landlords
+ * - Platform analytics for admins
+ * - Quick action shortcuts
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
@@ -9,6 +24,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { 
   Search, 
   Home, 
@@ -333,9 +349,11 @@ export default function DashboardPage() {
                   className="bg-white rounded-lg shadow-md overflow-hidden"
                 >
                   <div className="aspect-video relative">
-                    <img
+                    <Image
                       src={property.images?.[0] || '/placeholder-property.jpg'}
                       alt={property.propertyTitle}
+                      width={400}
+                      height={300}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute top-3 left-3">

@@ -1,5 +1,20 @@
 'use client'
 
+/**
+ * User Profile Management Page
+ * Comprehensive profile page for all user types (tenant, landlord, admin)
+ * 
+ * Features:
+ * - Profile information display and editing
+ * - Bank details management
+ * - Settings configuration
+ * - Dynamic data loading from Firebase
+ * - Role-based UI adaptations
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -12,6 +27,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { toast } from 'react-hot-toast'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+import Image from 'next/image'
 
 export default function ProfilePage() {
   const { user } = useAuth()
@@ -48,13 +64,13 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!user?.uid) {
+      if (!user?.id) {
         return
       }
       
       try {
         // Try landlords collection first
-        const landlordRef = doc(db, 'landlords', user.uid)
+        const landlordRef = doc(db, 'landlords', user.id)
         const landlordSnap = await getDoc(landlordRef)
         
         if (landlordSnap.exists()) {
@@ -88,7 +104,7 @@ export default function ProfilePage() {
           }))
         } else {
           // Try users collection as fallback
-          const userRef = doc(db, 'users', user.uid)
+          const userRef = doc(db, 'users', user.id)
           const userSnap = await getDoc(userRef)
           
           if (userSnap.exists()) {
@@ -125,10 +141,10 @@ export default function ProfilePage() {
       }
     }
 
-    if (user?.uid) {
+    if (user?.id) {
       fetchProfile()
     }
-  }, [user?.uid])
+  }, [user])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setProfileData(prev => ({
@@ -138,13 +154,13 @@ export default function ProfilePage() {
   }
 
   const handleSave = async () => {
-    if (!user?.uid) return
+    if (!user?.id) return
     
     try {
       setLoading(true)
       
       // Try to update landlords collection first
-      const landlordRef = doc(db, 'landlords', user.uid)
+      const landlordRef = doc(db, 'landlords', user.id)
       const landlordSnap = await getDoc(landlordRef)
       
       if (landlordSnap.exists()) {
@@ -157,7 +173,7 @@ export default function ProfilePage() {
         })
       } else {
         // Update users collection as fallback
-        const userRef = doc(db, 'users', user.uid)
+        const userRef = doc(db, 'users', user.id)
         await updateDoc(userRef, {
           phone: profileData.phone,
           address: profileData.address,
@@ -223,9 +239,11 @@ export default function ProfilePage() {
             <div className="flex justify-center mb-6">
               <div className="relative">
                 {profileData.profileImage ? (
-                  <img 
+                  <Image 
                     src={profileData.profileImage} 
                     alt="Profile" 
+                    width={96}
+                    height={96}
                     className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-white/20"
                   />
                 ) : (

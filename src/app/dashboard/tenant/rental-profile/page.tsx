@@ -1,5 +1,20 @@
 'use client'
 
+/**
+ * Tenant Rental Profile Builder
+ * Comprehensive profile creation for rental applications and tenant verification
+ * 
+ * Features:
+ * - Complete rental application profile
+ * - Employment and income verification
+ * - Document upload and management
+ * - Emergency contact information
+ * - Rental preferences and requirements
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
@@ -90,10 +105,12 @@ export default function RentalProfilePage() {
       smokingPreference: 'non-smoker' as const
     },
     documents: {
-      proofOfEmployment: null as string | null,
-      proofOfIncome: null as string | null,
-      guarantorLetter: null as string | null,
-      governmentId: null as string | null
+      governmentId: false,
+      proofOfIncome: false,
+      bankStatements: false,
+      employmentLetter: false,
+      references: false,
+      guarantorDocuments: false
     }
   })
 
@@ -110,7 +127,7 @@ export default function RentalProfilePage() {
           relationship: profile.emergencyContact?.relationship || '',
           phoneNumber: profile.emergencyContact?.phoneNumber || ''
         },
-        employmentStatus: (profile.employmentStatus || 'employed') as 'employed' | 'self-employed' | 'student' | 'unemployed' | 'retired',
+        employmentStatus: (profile.employmentStatus || 'employed') as any,
         employer: profile.employer || '',
         jobTitle: profile.jobTitle || '',
         monthlyIncome: profile.monthlyIncome || 0,
@@ -123,13 +140,15 @@ export default function RentalProfilePage() {
           moveInDate: profile.preferences?.moveInDate || '',
           leaseDuration: profile.preferences?.leaseDuration || '12 months',
           petOwner: profile.preferences?.petOwner || false,
-          smokingPreference: (profile.preferences?.smokingPreference || 'non-smoker') as 'non-smoker' | 'smoker' | 'occasional'
+          smokingPreference: (profile.preferences?.smokingPreference || 'non-smoker') as any
         },
         documents: {
-          proofOfEmployment: profile.documents?.proofOfEmployment || null,
-          proofOfIncome: profile.documents?.proofOfIncome || null,
-          guarantorLetter: profile.documents?.guarantorLetter || null,
-          governmentId: profile.documents?.governmentId || null
+          governmentId: profile.documents?.governmentId || false,
+          proofOfIncome: profile.documents?.proofOfIncome || false,
+          bankStatements: profile.documents?.bankStatements || false,
+          employmentLetter: profile.documents?.employmentLetter || false,
+          references: profile.documents?.references || false,
+          guarantorDocuments: profile.documents?.guarantorDocuments || false
         }
       })
     }
@@ -198,7 +217,7 @@ export default function RentalProfilePage() {
     // Mock file upload - in real app, this would upload to Firebase Storage
     return new Promise<string>((resolve) => {
       setTimeout(() => {
-        const mockUrl = `https://storage.firebase.com/documents/${user?.uid}/${documentType}_${Date.now()}.pdf`
+        const mockUrl = `https://storage.firebase.com/documents/${user?.id}/${documentType}_${Date.now()}.pdf`
         resolve(mockUrl)
       }, 1000)
     })
@@ -601,7 +620,7 @@ export default function RentalProfilePage() {
                           Proof of Employment *
                         </Label>
                         <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-                          {localProfile.documents.proofOfEmployment ? (
+                          {localProfile.documents.employmentLetter ? (
                             <div className="space-y-3">
                               <CheckCircle className="h-8 w-8 text-green-500 mx-auto" />
                               <p className="text-sm text-green-700 font-medium">Document uploaded</p>
@@ -610,7 +629,7 @@ export default function RentalProfilePage() {
                                   <Eye className="h-4 w-4 mr-1" />
                                   View
                                 </Button>
-                                <Button variant="outline" size="sm" onClick={() => updateDocuments('proofOfEmployment', null)}>
+                                <Button variant="outline" size="sm" onClick={() => updateDocuments('employmentLetter', false)}>
                                   <Trash2 className="h-4 w-4 mr-1" />
                                   Remove
                                 </Button>
@@ -631,7 +650,7 @@ export default function RentalProfilePage() {
                                     const file = (e.target as HTMLInputElement).files?.[0]
                                     if (file) {
                                       const url = await handleFileUpload(file, 'proof_employment')
-                                      updateDocuments('proofOfEmployment', url)
+                                      updateDocuments('employmentLetter', true)
                                       toast.success('Employment document uploaded successfully!')
                                     }
                                   }
@@ -662,7 +681,7 @@ export default function RentalProfilePage() {
                                   <Eye className="h-4 w-4 mr-1" />
                                   View
                                 </Button>
-                                <Button variant="outline" size="sm" onClick={() => updateDocuments('proofOfIncome', null)}>
+                                <Button variant="outline" size="sm" onClick={() => updateDocuments('proofOfIncome', false)}>
                                   <Trash2 className="h-4 w-4 mr-1" />
                                   Remove
                                 </Button>
@@ -683,7 +702,7 @@ export default function RentalProfilePage() {
                                     const file = (e.target as HTMLInputElement).files?.[0]
                                     if (file) {
                                       const url = await handleFileUpload(file, 'proof_income')
-                                      updateDocuments('proofOfIncome', url)
+                                      updateDocuments('proofOfIncome', true)
                                       toast.success('Income document uploaded successfully!')
                                     }
                                   }
@@ -714,7 +733,7 @@ export default function RentalProfilePage() {
                                   <Eye className="h-4 w-4 mr-1" />
                                   View
                                 </Button>
-                                <Button variant="outline" size="sm" onClick={() => updateDocuments('governmentId', null)}>
+                                <Button variant="outline" size="sm" onClick={() => updateDocuments('governmentId', false)}>
                                   <Trash2 className="h-4 w-4 mr-1" />
                                   Remove
                                 </Button>
@@ -735,7 +754,7 @@ export default function RentalProfilePage() {
                                     const file = (e.target as HTMLInputElement).files?.[0]
                                     if (file) {
                                       const url = await handleFileUpload(file, 'government_id')
-                                      updateDocuments('governmentId', url)
+                                      updateDocuments('governmentId', true)
                                       toast.success('ID document uploaded successfully!')
                                     }
                                   }
@@ -758,7 +777,7 @@ export default function RentalProfilePage() {
                           <Badge variant="secondary" className="ml-2 text-xs">Optional</Badge>
                         </Label>
                         <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-                          {localProfile.documents.guarantorLetter ? (
+                          {localProfile.documents.guarantorDocuments ? (
                             <div className="space-y-3">
                               <CheckCircle className="h-8 w-8 text-green-500 mx-auto" />
                               <p className="text-sm text-green-700 font-medium">Document uploaded</p>
@@ -767,7 +786,7 @@ export default function RentalProfilePage() {
                                   <Eye className="h-4 w-4 mr-1" />
                                   View
                                 </Button>
-                                <Button variant="outline" size="sm" onClick={() => updateDocuments('guarantorLetter', null)}>
+                                <Button variant="outline" size="sm" onClick={() => updateDocuments('guarantorDocuments', false)}>
                                   <Trash2 className="h-4 w-4 mr-1" />
                                   Remove
                                 </Button>
@@ -788,7 +807,7 @@ export default function RentalProfilePage() {
                                     const file = (e.target as HTMLInputElement).files?.[0]
                                     if (file) {
                                       const url = await handleFileUpload(file, 'guarantor_letter')
-                                      updateDocuments('guarantorLetter', url)
+                                      updateDocuments('guarantorDocuments', true)
                                       toast.success('Guarantor letter uploaded successfully!')
                                     }
                                   }
@@ -809,7 +828,7 @@ export default function RentalProfilePage() {
                       <h4 className="font-semibold text-gray-900 mb-3">Document Status</h4>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="flex items-center">
-                          <div className={`w-3 h-3 rounded-full mr-2 ${localProfile.documents.proofOfEmployment ? 'bg-green-500' : 'bg-gray-300'}`} />
+                          <div className={`w-3 h-3 rounded-full mr-2 ${localProfile.documents.employmentLetter ? 'bg-green-500' : 'bg-gray-300'}`} />
                           <span className="text-sm">Proof of Employment</span>
                         </div>
                         <div className="flex items-center">
@@ -821,7 +840,7 @@ export default function RentalProfilePage() {
                           <span className="text-sm">Government ID</span>
                         </div>
                         <div className="flex items-center">
-                          <div className={`w-3 h-3 rounded-full mr-2 ${localProfile.documents.guarantorLetter ? 'bg-green-500' : 'bg-gray-300'}`} />
+                          <div className={`w-3 h-3 rounded-full mr-2 ${localProfile.documents.guarantorDocuments ? 'bg-green-500' : 'bg-gray-300'}`} />
                           <span className="text-sm">Guarantor Letter</span>
                         </div>
                       </div>

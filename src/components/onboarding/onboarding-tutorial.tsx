@@ -96,7 +96,8 @@ export default function OnboardingTutorial({ isOpen, onClose, onComplete }: Onbo
   useEffect(() => {
     if (isOpen) {
       // Scroll to the target element when step changes
-      const targetElement = document.querySelector(onboardingSteps[currentStep]?.target)
+      const target = onboardingSteps[currentStep]?.target
+      const targetElement = target ? document.querySelector(target) : null
       if (targetElement) {
         // Scroll to target with better positioning for mobile
         const rect = targetElement.getBoundingClientRect()
@@ -147,9 +148,9 @@ export default function OnboardingTutorial({ isOpen, onClose, onComplete }: Onbo
   if (!isOpen) return null
 
   const currentStepData = onboardingSteps[currentStep]
-  const targetElement = document.querySelector(currentStepData?.target)
+  const targetElement = currentStepData?.target ? document.querySelector(currentStepData.target) : null
 
-  if (!targetElement) {
+  if (!targetElement || !currentStepData) {
     return null
   }
 

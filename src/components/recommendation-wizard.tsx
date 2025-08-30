@@ -115,8 +115,8 @@ export default function RecommendationWizard() {
       setPreferences(prev => ({
         ...prev,
         ...preset,
-        propertyTypes: preset.propertyTypes as string[],
-        amenityPreferences: preset.amenityPreferences as string[]
+        propertyTypes: [...preset.propertyTypes],
+        amenityPreferences: [...preset.amenityPreferences]
       }))
       setSelectedPreset(presetKey)
     }
@@ -574,8 +574,8 @@ export default function RecommendationWizard() {
           ))}
         </div>
         <div className="text-center">
-          <h2 className="text-xl font-bold text-gray-900">{WIZARD_STEPS[currentStep].title}</h2>
-          <p className="text-gray-600">{WIZARD_STEPS[currentStep].description}</p>
+          <h2 className="text-xl font-bold text-gray-900">{WIZARD_STEPS[currentStep]?.title || 'Loading...'}</h2>
+          <p className="text-gray-600">{WIZARD_STEPS[currentStep]?.description || ''}</p>
         </div>
       </div>
 

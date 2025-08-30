@@ -1,5 +1,20 @@
 'use client'
 
+/**
+ * Landlord Profile & Business Management
+ * Professional landlord profile with business information and settings
+ * 
+ * Features:
+ * - Business information management
+ * - Banking details for payments
+ * - Account security settings
+ * - Notification preferences
+ * - Profile verification status
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
 import React, { useState } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { useLandlordProfile, useUpdateLandlordProfile } from '@/lib/queries/landlord-queries'
@@ -10,6 +25,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { 
   User, 
   Building, 
@@ -239,15 +255,17 @@ export default function LandlordProfilePage() {
   const updateField = (path: string, value: any) => {
     const keys = path.split('.')
     setProfileData(prev => {
-      const updated = { ...prev }
+      const updated = { ...prev } as any
       let current = updated
       
       for (let i = 0; i < keys.length - 1; i++) {
-        if (!current[keys[i]]) current[keys[i]] = {}
-        current = current[keys[i]]
+        const key = keys[i]
+        if (key && !current[key]) current[key] = {}
+        if (key) current = current[key]
       }
       
-      current[keys[keys.length - 1]] = value
+      const lastKey = keys[keys.length - 1]
+      if (lastKey) current[lastKey] = value
       return updated
     })
   }
@@ -346,9 +364,11 @@ export default function LandlordProfilePage() {
                         <div className="relative">
                           <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center">
                             {landlordProfile?.profileImage ? (
-                              <img 
+                              <Image 
                                 src={landlordProfile.profileImage} 
                                 alt="Profile" 
+                                width={96}
+                                height={96}
                                 className="w-full h-full object-cover rounded-full"
                               />
                             ) : (

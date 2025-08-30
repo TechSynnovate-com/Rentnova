@@ -26,8 +26,8 @@ import { FirebaseProperty } from '@/types/firebase-schema'
 import { toast } from 'react-hot-toast'
 import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
-import Image from 'next/image'
 import { Navbar } from '@/components/layout/navbar'
+import Image from 'next/image'
 
 // Mock data for landlord properties (in real app, fetch from Firebase)
 const mockProperties: FirebaseProperty[] = [

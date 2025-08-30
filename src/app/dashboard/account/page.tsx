@@ -43,15 +43,15 @@ export default function AccountPage() {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!user?.uid) {
+      if (!user?.id) {
         setLoading(false)
         return
       }
       
       try {
-        console.log('Fetching user data for:', user.uid)
+        console.log('Fetching user data for:', user.id)
         // Try landlords collection first
-        const landlordRef = doc(db, 'landlords', user.uid)
+        const landlordRef = doc(db, 'landlords', user.id)
         const landlordSnap = await getDoc(landlordRef)
         
         if (landlordSnap.exists()) {
@@ -78,7 +78,7 @@ export default function AccountPage() {
         } else {
           console.log('No landlord data found, trying users collection')
           // Try users collection as fallback
-          const userRef = doc(db, 'users', user.uid)
+          const userRef = doc(db, 'users', user.id)
           const userSnap = await getDoc(userRef)
           
           if (userSnap.exists()) {
@@ -106,7 +106,7 @@ export default function AccountPage() {
       setLoading(false)
     }, 5000)
 
-    if (user?.uid) {
+    if (user?.id) {
       fetchUserData()
     } else if (user === null) {
       // User is not authenticated
@@ -114,7 +114,7 @@ export default function AccountPage() {
     }
 
     return () => clearTimeout(timeout)
-  }, [user?.uid])
+  }, [user])
 
   const formatDate = (timestamp: any) => {
     if (!timestamp) return 'N/A'
@@ -123,7 +123,7 @@ export default function AccountPage() {
   }
 
   const accountInfo = [
-    { label: 'Account ID', value: user?.uid?.slice(0, 8) + '...', icon: Settings },
+    { label: 'Account ID', value: user?.id?.slice(0, 8) + '...', icon: Settings },
     { label: 'Business Name', value: userData.businessName || 'Individual', icon: Building },
     { label: 'Member Since', value: formatDate(userData.joinedAt), icon: Calendar },
     { label: 'Verification Status', value: userData.verified ? 'Verified' : 'Pending', icon: userData.verified ? Shield : Eye }
@@ -141,8 +141,8 @@ export default function AccountPage() {
     
     // Save to Firebase
     try {
-      if (user?.uid) {
-        const landlordRef = doc(db, 'landlords', user.uid)
+      if (user?.id) {
+        const landlordRef = doc(db, 'landlords', user.id)
         const landlordSnap = await getDoc(landlordRef)
         
         if (landlordSnap.exists()) {

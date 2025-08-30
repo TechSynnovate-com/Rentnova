@@ -1,6 +1,21 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+/**
+ * Property Discovery & Search Interface
+ * Advanced property search and browsing experience for potential tenants
+ * 
+ * Features:
+ * - Advanced filtering (price, location, type, amenities)
+ * - Grid and list view modes
+ * - Favorites management
+ * - Property comparison tools
+ * - Real-time search with debouncing
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
@@ -9,6 +24,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { 
   Search, 
   Heart, 
@@ -107,7 +123,7 @@ const mockProperties: Property[] = [
   }
 ]
 
-export default function DiscoverPropertiesPage() {
+function DiscoverPropertiesContent() {
   const { user } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -324,9 +340,11 @@ export default function DiscoverPropertiesPage() {
             >
               {/* Property Image */}
               <div className={`relative ${viewMode === 'list' ? 'w-80 h-48' : 'aspect-video'}`}>
-                <img
-                  src={property.images[0]}
+                <Image
+                  src={property.images[0] || '/placeholder-property.jpg'}
                   alt={property.propertyTitle}
+                  width={400}
+                  height={300}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute top-3 left-3">
@@ -424,5 +442,13 @@ export default function DiscoverPropertiesPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function DiscoverPropertiesPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <DiscoverPropertiesContent />
+    </Suspense>
   )
 }

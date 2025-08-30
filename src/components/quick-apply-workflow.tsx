@@ -90,35 +90,43 @@ export default function QuickApplyWorkflow({
 
       const application: Omit<FirebaseApplication, 'id'> = {
         propertyId,
-        tenantId: user.uid,
+        applicantId: user.id,
         landlordId,
         
-        // Application details
-        coverLetter: applicationData.coverLetter,
-        moveInDate: applicationData.moveInDate,
-        leaseDuration: applicationData.leaseDuration,
-        additionalNotes: applicationData.additionalNotes,
-        
-        // From rental profile
-        tenantInfo: {
+        // Personal information
+        personalInfo: {
           fullName: profile.fullName,
-          email: user.email || '',
+          email: user.email,
           phone: profile.phoneNumber,
-          currentAddress: profile.currentAddress,
-          monthlyIncome: profile.monthlyIncome,
-          employmentStatus: profile.employmentStatus,
-          emergencyContact: profile.emergencyContact
+          dateOfBirth: new Date(profile.dateOfBirth)
+        },
+        
+        // Employment information
+        employmentInfo: {
+          employer: profile.employer || '',
+          position: profile.jobTitle || '',
+          monthlyIncome: profile.monthlyIncome
+        },
+        
+        // Rental history
+        rentalHistory: {
+          ...(profile.rentalHistory?.previousAddress && { previousAddress: profile.rentalHistory.previousAddress }),
+          ...(profile.rentalHistory?.landlordName && { previousLandlord: profile.rentalHistory.landlordName }),
+          ...(profile.rentalHistory?.reasonForLeaving && { reasonForLeaving: profile.rentalHistory.reasonForLeaving })
+        },
+        
+        // Documents
+        documents: {},
+        
+        // Application fee
+        applicationFee: {
+          amount: 0,
+          paid: false
         },
         
         // Status and metadata
-        status: 'pending',
-        submittedAt: serverTimestamp(),
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        
-        // Documents status from profile
-        documentsSubmitted: profile.documents,
-        profileCompletionPercentage: profileCompletion
+        status: 'submitted',
+        submittedAt: serverTimestamp() as any
       }
 
       await addDoc(collection(db, FIREBASE_COLLECTIONS.APPLICATIONS), application)

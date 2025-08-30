@@ -1,5 +1,20 @@
 'use client'
 
+/**
+ * Tenant Profile Management
+ * Comprehensive rental profile for tenant applications and preferences
+ * 
+ * Features:
+ * - Personal information management
+ * - Employment verification
+ * - Rental history tracking
+ * - Document upload and management
+ * - Preference settings for property searches
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
 import { useState } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
@@ -129,13 +144,16 @@ export default function TenantRentalProfilePage() {
     if (section === 'root') {
       setProfileData(prev => ({ ...prev, [field]: value }))
     } else {
-      setProfileData(prev => ({
-        ...prev,
-        [section]: {
-          ...prev[section as keyof typeof prev],
-          [field]: value
+      setProfileData(prev => {
+        const currentSection = prev[section as keyof typeof prev] as any
+        return {
+          ...prev,
+          [section]: {
+            ...currentSection,
+            [field]: value
+          }
         }
-      }))
+      })
     }
   }
 

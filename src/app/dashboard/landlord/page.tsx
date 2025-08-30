@@ -1,5 +1,20 @@
 'use client'
 
+/**
+ * Landlord Dashboard - Main Overview Page
+ * Comprehensive dashboard for landlords to manage their property portfolio
+ * 
+ * Features:
+ * - Property overview with status indicators
+ * - Application management with approval workflow
+ * - Revenue analytics and performance metrics
+ * - Tenant management interface
+ * - Quick actions for property operations
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
@@ -8,6 +23,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { 
   Plus,
   Home,
@@ -72,7 +88,7 @@ export default function LandlordDashboard() {
     await updateApplicationMutation.mutateAsync({
       applicationId,
       status,
-      reviewNotes: notes,
+      ...(notes && { reviewNotes: notes }),
       landlordId: landlordProfile.id
     })
   }
@@ -318,10 +334,12 @@ export default function LandlordDashboard() {
                   ) : (
                     properties.slice(0, 3).map((property) => (
                       <div key={property.id} className="flex items-center space-x-4 p-4 bg-white/5 rounded-lg border border-white/10">
-                        {property.imageUrls && property.imageUrls.length > 0 ? (
-                          <img
+                        {property.imageUrls && property.imageUrls.length > 0 && property.imageUrls[0] ? (
+                          <Image
                             src={property.imageUrls[0]}
                             alt={property.propertyTitle || `${property.propertyType} in ${property.city}`}
+                            width={64}
+                            height={64}
                             className="w-16 h-16 object-cover rounded-lg"
                           />
                         ) : (

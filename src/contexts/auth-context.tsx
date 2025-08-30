@@ -1,5 +1,20 @@
 'use client'
 
+/**
+ * Authentication Context Provider
+ * Centralized authentication state management for the entire application
+ * 
+ * Features:
+ * - Firebase authentication integration
+ * - User role management (tenant, landlord, admin)
+ * - Protected route functionality
+ * - Session persistence and cleanup
+ * - Profile completion tracking
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
 import { createContext, useContext, useEffect, useState } from 'react'
 import { 
   User as FirebaseUser,
@@ -9,7 +24,7 @@ import {
   signOut as firebaseSignOut,
   updateProfile
 } from 'firebase/auth'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import { User } from '@/types'
 import toast from 'react-hot-toast'
@@ -103,8 +118,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           emailUpdates: true,
           theme: 'light' as const,
         },
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
         ...additionalData,
       }
       
@@ -175,12 +190,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userRef = doc(db, 'users', user.id)
       const updateData = {
         ...updates,
-        updatedAt: new Date(),
+        updatedAt: serverTimestamp(),
       }
       
       await setDoc(userRef, updateData, { merge: true })
       
-      const updatedUser = { ...user, ...updateData }
+      const updatedUser = { 
+        ...user, 
+        ...updateData,
+        updatedAt: new Date().toISOString() // Convert FieldValue to string
+      }
       setUser(updatedUser)
       
       toast.success('Profile updated successfully!')

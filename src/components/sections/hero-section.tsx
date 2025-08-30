@@ -1,5 +1,20 @@
 'use client'
 
+/**
+ * Hero Section Component
+ * Compelling landing page hero with search functionality
+ * 
+ * Features:
+ * - Dynamic property search with location autocomplete
+ * - Animated call-to-action buttons
+ * - Statistics display for platform credibility
+ * - Responsive design with modern gradients
+ * - Mobile-optimized layout
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
 import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

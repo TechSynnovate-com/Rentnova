@@ -1,5 +1,20 @@
 'use client'
 
+/**
+ * Rental Application Submission Form
+ * Streamlined application process for prospective tenants
+ * 
+ * Features:
+ * - Auto-populate from rental profile
+ * - Document upload and verification
+ * - Application fee processing
+ * - Real-time form validation
+ * - Application status tracking
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
@@ -110,7 +125,7 @@ export default function PropertyApplicationPage() {
         additionalNotes: ''
       })
     }
-  }, [profile, useProfile])
+  }, [profile, useProfile, user?.email])
 
   const handleUseProfile = () => {
     if (!isProfileComplete()) {
@@ -133,7 +148,7 @@ export default function PropertyApplicationPage() {
         propertyTitle: property.propertyTitle || `${property.propertyType} in ${property.city}`,
         propertyPrice: property.price,
         landlordId: property.ownerId,
-        tenantId: user.uid,
+        tenantId: user.id,
         tenantEmail: user.email,
         
         // Application data

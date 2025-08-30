@@ -1,5 +1,20 @@
 'use client'
 
+/**
+ * Property Detail & Application Page
+ * Comprehensive property viewing and rental application interface
+ * 
+ * Features:
+ * - Detailed property information display
+ * - Image gallery with full-screen view
+ * - Interactive application form
+ * - Document upload functionality
+ * - Real-time availability status
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
 import React, { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
@@ -47,12 +62,14 @@ import {
 import { toast } from 'react-hot-toast'
 import { db } from '@/lib/firebase'
 import { doc, getDoc, collection, addDoc, serverTimestamp } from 'firebase/firestore'
-import { FirebaseProperty, FirebaseChatRoom, FIREBASE_COLLECTIONS } from '@/types/firebase-schema'
+import { FirebaseProperty, FIREBASE_COLLECTIONS } from '@/types/firebase-schema'
 import { useFavorites } from '@/contexts/favorites-context'
 import QuickApplyWorkflow from '@/components/quick-apply-workflow'
 
 import { Footer } from '@/components/layout/footer'
 import ContextualHelp from '@/components/help-bubbles/contextual-help'
+import SmartLocationInsights from '@/components/smart-location-insights'
+import RentalCompatibilityQuiz from '@/components/rental-compatibility-quiz'
 
 export default function PropertyDetailPage() {
   const params = useParams()
@@ -69,11 +86,7 @@ export default function PropertyDetailPage() {
   const [activeTab, setActiveTab] = useState('overview')
   const [showApplyModal, setShowApplyModal] = useState(false)
 
-  useEffect(() => {
-    fetchProperty()
-  }, [params.id])
-
-  const fetchProperty = async () => {
+  const fetchProperty = React.useCallback(async () => {
     try {
       if (!params.id) return
       
@@ -88,7 +101,11 @@ export default function PropertyDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [params.id])
+
+  useEffect(() => {
+    fetchProperty()
+  }, [fetchProperty])
 
   const handleFavorite = async () => {
     if (!user) {
@@ -131,22 +148,22 @@ export default function PropertyDetailPage() {
     if (!property) return
 
     try {
-      const chatRoom: Omit<FirebaseChatRoom, 'id'> = {
+      const chatRoom = {
         propertyId: params.id as string,
-        tenantId: user.uid,
+        tenantId: user.id,
         landlordId: property.ownerId,
         lastMessage: {
           text: `Hi! I'm interested in your property: ${property.propertyTitle || property.description}`,
-          senderId: user.uid,
+          senderId: user.id,
           timestamp: serverTimestamp(),
           read: false
         },
-        participants: [user.uid, property.ownerId],
+        participants: [user.id, property.ownerId],
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       }
 
-      await addDoc(collection(db, FIREBASE_COLLECTIONS.CHAT_ROOMS), chatRoom)
+      await addDoc(collection(db, 'chat_rooms'), chatRoom)
       toast.success('Chat started! You can now message the landlord.')
       router.push('/dashboard/tenant/messages')
     } catch (error) {
@@ -355,11 +372,6 @@ export default function PropertyDetailPage() {
     'Power Factor': Zap,
     'Power Efficiency': Zap,
     'Power Consumption': Zap,
-    'Power Demand': Zap,
-    'Power Load': Zap,
-    'Power Peak': Zap,
-    'Power Base': Zap,
-    'Power Reserve': Zap,
     'Power Backup': Zap,
     'Power Emergency': Zap,
     'Power Outage': Zap,
@@ -584,6 +596,8 @@ export default function PropertyDetailPage() {
                     { id: 'overview', label: 'Overview' },
                     { id: 'amenities', label: 'Amenities' },
                     { id: 'location', label: 'Location' },
+                    { id: 'insights', label: 'Smart Insights' },
+                    { id: 'compatibility', label: 'Compatibility Quiz' },
                     { id: 'policies', label: 'Policies' }
                   ].map((tab) => (
                     <button
@@ -688,11 +702,11 @@ export default function PropertyDetailPage() {
                         </div>
                       </div>
                       
-                      {property.nearbyAmenities && property.nearbyAmenities.length > 0 && (
+                      {property.amenities && property.amenities.length > 0 && (
                         <div>
                           <h4 className="font-medium text-gray-900 mb-2">Nearby Features</h4>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            {property.nearbyAmenities.map((feature, index) => (
+                            {property.amenities.map((feature, index) => (
                               <div key={index} className="flex items-center space-x-2">
                                 <Navigation className="h-4 w-4 text-purple-600" />
                                 <span className="text-gray-700">{feature}</span>
@@ -710,6 +724,36 @@ export default function PropertyDetailPage() {
                         </div>
                       </div>
                     </div>
+                  </div>
+                )}
+
+                {activeTab === 'insights' && (
+                  <div className="space-y-6">
+                    <SmartLocationInsights 
+                      property={property} 
+                      className="animate-in slide-in-from-bottom-4 duration-500"
+                    />
+                  </div>
+                )}
+
+                {activeTab === 'compatibility' && (
+                  <div className="space-y-6">
+                    <RentalCompatibilityQuiz 
+                      property={property}
+                      onComplete={(result) => {
+                        console.log('Quiz completed:', result)
+                        if (result.score >= 80) {
+                          toast.success(`Excellent match! ${result.score}% compatibility`)
+                        } else if (result.score >= 65) {
+                          toast.success(`Good match! ${result.score}% compatibility`)
+                        } else {
+                          toast('Consider other options. ' + result.score + '% compatibility', {
+                            icon: '🤔'
+                          })
+                        }
+                      }}
+                      className="animate-in slide-in-from-bottom-4 duration-500"
+                    />
                   </div>
                 )}
 
@@ -735,11 +779,11 @@ export default function PropertyDetailPage() {
                         </div>
                       </div>
                       
-                      {property.termsAndConditions && (
+                      {property.description && property.description.includes('terms') && (
                         <div>
                           <h4 className="font-medium text-gray-900 mb-2">Terms & Conditions</h4>
                           <div className="bg-gray-50 p-4 rounded-lg">
-                            <p className="text-gray-700 text-sm">{property.termsAndConditions}</p>
+                            <p className="text-gray-700 text-sm">{property.description}</p>
                           </div>
                         </div>
                       )}
@@ -842,11 +886,11 @@ export default function PropertyDetailPage() {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-600">Listed</span>
-                      <span className="font-medium">{property.createdAt ? new Date(property.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</span>
+                      <span className="font-medium">{property.createdAt ? new Date(property.createdAt as any).toLocaleDateString() : 'N/A'}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-600">Updated</span>
-                      <span className="font-medium">{property.updatedAt ? new Date(property.updatedAt.seconds * 1000).toLocaleDateString() : 'N/A'}</span>
+                      <span className="font-medium">{property.updatedAt ? new Date(property.updatedAt as any).toLocaleDateString() : 'N/A'}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -856,11 +900,7 @@ export default function PropertyDetailPage() {
         </div>
       </div>
 
-      {/* Contextual Help */}
-      <ContextualHelp
-        page="property-details"
-        helpText="Use the tabs to explore different aspects of the property. Click 'Apply Now' to start your rental application, or 'Send Message' to contact the landlord directly."
-      />
+
 
       {/* Apply Modal */}
       {showApplyModal && (
@@ -870,7 +910,7 @@ export default function PropertyDetailPage() {
               propertyId={params.id as string}
               propertyTitle={property.propertyTitle || property.description || 'Property'}
               propertyPrice={property.price || 0}
-              landlordId={property.ownerId}
+              landlordId={property.ownerId || ''}
               onComplete={() => {
                 setShowApplyModal(false)
                 toast.success('Application submitted successfully!')

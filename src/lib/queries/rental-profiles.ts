@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { doc, getDoc, setDoc, collection, onSnapshot } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
-import { FIREBASE_COLLECTIONS, FirebaseRentalProfile } from '@/types/firebase-schema'
+import { FIREBASE_COLLECTIONS, FirebaseApplication } from '@/types/firebase-schema'
 import { toast } from 'react-hot-toast'
 
 // Query keys
@@ -21,45 +21,8 @@ export function useRentalProfile(userId: string | null) {
       const docSnap = await getDoc(docRef)
       
       if (docSnap.exists()) {
-        const data = docSnap.data() as FirebaseRentalProfile
-        // Ensure all nested objects exist with default values
-        return {
-          ...data,
-          emergencyContact: data.emergencyContact || {
-            name: '',
-            relationship: '',
-            phoneNumber: ''
-          },
-          rentalHistory: data.rentalHistory || {
-            currentlyRenting: false,
-            previousAddress: '',
-            landlordName: '',
-            landlordContact: '',
-            rentAmount: 0,
-            tenancyDuration: '',
-            reasonForLeaving: ''
-          },
-          preferences: data.preferences || {
-            preferredLocation: [],
-            maxBudget: 0,
-            minBedrooms: 1,
-            maxBedrooms: 5,
-            preferredPropertyType: [],
-            moveInDate: '',
-            leaseDuration: '12 months',
-            petOwner: false,
-            smokingPreference: 'non-smoker' as const,
-            additionalRequirements: ''
-          },
-          documents: data.documents || {
-            governmentId: false,
-            proofOfIncome: false,
-            bankStatements: false,
-            employmentLetter: false,
-            references: false,
-            guarantorDocuments: false
-          }
-        }
+        const data = docSnap.data() as any
+        return data
       }
       
       return null
@@ -74,10 +37,10 @@ export function useCreateRentalProfile() {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: async ({ userId, profileData }: { userId: string; profileData: Partial<FirebaseRentalProfile> }) => {
+    mutationFn: async ({ userId, profileData }: { userId: string; profileData: any }) => {
       const docRef = doc(db, FIREBASE_COLLECTIONS.RENTAL_PROFILES, userId)
       
-      const newProfile: FirebaseRentalProfile = {
+      const newProfile: any = {
         fullName: '',
         dateOfBirth: '',
         phoneNumber: '',
@@ -140,7 +103,7 @@ export function useUpdateRentalProfile() {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: async ({ userId, updates }: { userId: string; updates: Partial<FirebaseRentalProfile> }) => {
+    mutationFn: async ({ userId, updates }: { userId: string; updates: any }) => {
       const docRef = doc(db, FIREBASE_COLLECTIONS.RENTAL_PROFILES, userId)
       
       const updateData = {
@@ -164,7 +127,7 @@ export function useUpdateRentalProfile() {
 }
 
 // Utility function to calculate completion percentage
-export function calculateCompletionPercentage(profile: FirebaseRentalProfile | null): number {
+export function calculateCompletionPercentage(profile: any): number {
   if (!profile) return 0
   
   let completed = 0
@@ -205,7 +168,7 @@ export function calculateCompletionPercentage(profile: FirebaseRentalProfile | n
 }
 
 // Set up real-time listener for rental profile
-export function useRentalProfileListener(userId: string | null, callback: (profile: FirebaseRentalProfile | null) => void) {
+export function useRentalProfileListener(userId: string | null, callback: (profile: any) => void) {
   return {
     subscribe: () => {
       if (!userId) return () => {}
@@ -214,7 +177,7 @@ export function useRentalProfileListener(userId: string | null, callback: (profi
       
       return onSnapshot(docRef, (doc) => {
         if (doc.exists()) {
-          const data = doc.data() as FirebaseRentalProfile
+          const data = doc.data() as any
           // Ensure all nested objects exist with default values
           const profileWithDefaults = {
             ...data,

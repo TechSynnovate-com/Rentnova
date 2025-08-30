@@ -85,13 +85,13 @@ export default function PropertiesPage() {
 
   // Fetch properties with filters using TanStack Query
   const { data: properties = [], isLoading, error } = useProperties({
-    city: filters.city || undefined,
-    state: filters.state || undefined,
-    propertyType: filters.propertyType || undefined,
-    minPrice: filters.minPrice || undefined,
-    maxPrice: filters.maxPrice < 10000000 ? filters.maxPrice : undefined,
-    bedrooms: filters.bedrooms || undefined,
-    location: filters.query || undefined // Use query as location search
+    ...(filters.city && { city: filters.city }),
+    ...(filters.state && { state: filters.state }),
+    ...(filters.propertyType && { propertyType: filters.propertyType }),
+    ...(filters.minPrice && { minPrice: filters.minPrice }),
+    ...(filters.maxPrice && filters.maxPrice < 10000000 && { maxPrice: filters.maxPrice }),
+    ...(filters.bedrooms && { bedrooms: filters.bedrooms }),
+    ...(filters.query && { location: filters.query }) // Use query as location search
   })
 
   // Sort properties by relevance when there's a search query

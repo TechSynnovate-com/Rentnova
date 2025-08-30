@@ -1,5 +1,20 @@
 'use client'
 
+/**
+ * Landlord Application Management System
+ * Comprehensive interface for reviewing and processing rental applications
+ * 
+ * Features:
+ * - Application filtering and search
+ * - Document verification workflow
+ * - Applicant scoring system
+ * - Status management (submitted, under review, approved, rejected)
+ * - Communication tools with applicants
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
 import React, { useState } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
@@ -166,11 +181,16 @@ export default function LandlordApplicationsPage() {
 
   const handleStatusUpdate = async (applicationId: string, newStatus: string, notes?: string) => {
     setApplications(prev => 
-      prev.map(app => 
-        app.id === applicationId 
-          ? { ...app, status: newStatus as Application['status'], notes }
-          : app
-      )
+      prev.map(app => {
+        if (app.id === applicationId) {
+          return {
+            ...app,
+            status: newStatus as Application['status'],
+            ...(notes && { notes })
+          }
+        }
+        return app
+      })
     )
     toast.success(`Application ${newStatus} successfully!`)
   }

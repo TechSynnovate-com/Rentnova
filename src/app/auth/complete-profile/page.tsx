@@ -40,7 +40,7 @@ export default function CompleteProfilePage() {
 
   const handleInputChange = (field: string, value: string) => {
     if (field.startsWith('emergencyContact.')) {
-      const contactField = field.split('.')[1]
+      const contactField = field.split('.')[1] as keyof typeof formData.emergencyContact
       setFormData(prev => ({
         ...prev,
         emergencyContact: {
@@ -49,7 +49,7 @@ export default function CompleteProfilePage() {
         }
       }))
     } else {
-      setFormData(prev => ({ ...prev, [field]: value }))
+      setFormData(prev => ({ ...prev, [field as keyof typeof prev]: value }))
     }
   }
 

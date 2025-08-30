@@ -1,5 +1,20 @@
 'use client'
 
+/**
+ * Tenant Messages Interface
+ * Real-time messaging system for tenant-landlord communication
+ * 
+ * Features:
+ * - Conversation list with unread indicators
+ * - Real-time message exchange
+ * - File attachment support
+ * - Message search and filtering
+ * - Responsive design for mobile and desktop
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
 import { useState } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
@@ -177,7 +192,7 @@ export default function TenantMessagesPage() {
                     key={conversation.id}
                     onClick={() => setSelectedConversation(conversation)}
                     className={`p-4 cursor-pointer hover:bg-gray-50 border-l-4 ${
-                      selectedConversation.id === conversation.id
+                      selectedConversation?.id === conversation.id
                         ? 'border-lavender-600 bg-lavender-50'
                         : 'border-transparent'
                     }`}

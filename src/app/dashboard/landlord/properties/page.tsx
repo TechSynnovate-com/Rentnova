@@ -1,5 +1,20 @@
 'use client'
 
+/**
+ * Landlord Property Portfolio Management
+ * Comprehensive property listing and management interface for landlords
+ * 
+ * Features:
+ * - Property portfolio overview with filtering
+ * - Property creation and editing
+ * - Status management (active, occupied, maintenance)
+ * - Performance analytics per property
+ * - Quick action buttons for common tasks
+ * 
+ * @author RentNova Development Team
+ * @version 1.0.0
+ */
+
 import React, { useState } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { useLandlordProfile, useLandlordProperties, useUpdateProperty } from '@/lib/queries/landlord-queries'
@@ -9,6 +24,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { 
   Building, 
   Plus, 
@@ -231,10 +247,12 @@ export default function LandlordPropertiesPage() {
                 <Card className="bg-white/10 backdrop-blur-sm border-white/20 overflow-hidden hover:bg-white/20 transition-all duration-300">
                   {/* Property Image */}
                   <div className="relative h-48">
-                    {property.imageUrls && property.imageUrls.length > 0 ? (
-                      <img
+                    {property.imageUrls && property.imageUrls.length > 0 && property.imageUrls[0] ? (
+                      <Image
                         src={property.imageUrls[0]}
                         alt={`${property.propertyType} in ${property.city}`}
+                        width={400}
+                        height={300}
                         className="w-full h-full object-cover"
                       />
                     ) : (
