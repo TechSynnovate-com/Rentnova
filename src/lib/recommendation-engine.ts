@@ -77,8 +77,8 @@ function calculateLocalScore(property: FirebaseProperty, preferences: UserPrefer
   
   // Location preference (20 points)
   if (preferences.location.some(loc => 
-    property.city.toLowerCase().includes(loc.toLowerCase()) || 
-    property.state.toLowerCase().includes(loc.toLowerCase())
+    property.city?.toLowerCase().includes(loc.toLowerCase()) || 
+    property.state?.toLowerCase().includes(loc.toLowerCase())
   )) {
     score += 20
     reasons.push('In your preferred location')
@@ -161,7 +161,7 @@ Make it conversational and highlight why these are perfect for their lifestyle.`
       temperature: 0.7
     })
     
-    return response.choices[0].message.content || 'Here are your personalized property recommendations based on your preferences.'
+    return response.choices?.[0]?.message?.content || 'Here are your personalized property recommendations based on your preferences.'
   } catch (error) {
     console.warn('AI enhancement failed, using fallback:', error)
     return `Based on your ${preferences.lifestyle} lifestyle and ${preferences.workStyle} work preference, I've found ${topProperties.length} properties that match your criteria. These selections prioritize your budget range and location preferences while considering your need for ${preferences.bedrooms} bedrooms.`
@@ -237,8 +237,8 @@ export class RecommendationEngine {
         
         if (preferences.location && 
             !preferences.location.some(loc =>
-              property.city.toLowerCase().includes(loc.toLowerCase()) ||
-              property.state.toLowerCase().includes(loc.toLowerCase())
+              property.city?.toLowerCase().includes(loc.toLowerCase()) ||
+              property.state?.toLowerCase().includes(loc.toLowerCase())
             )) {
           return false
         }

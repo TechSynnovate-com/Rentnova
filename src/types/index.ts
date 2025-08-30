@@ -1,289 +1,171 @@
-export interface User {
-  id: string
-  email: string
-  displayName: string
-  photoURL?: string
-  role: 'tenant' | 'landlord' | 'admin'
-  phoneNumber?: string
-  dateOfBirth?: string
-  emergencyContact?: {
-    name: string
-    phone: string
-    relationship: string
-  }
-  employmentInfo?: {
-    employer: string
-    position: string
-    monthlyIncome: number
-    startDate: string
-  }
-  documents?: {
-    idVerification?: string
-    incomeProof?: string
-    references?: string[]
-  }
-  preferences?: {
-    notifications: boolean
-    emailUpdates: boolean
-    theme: 'light' | 'dark' | 'system'
-  }
-  createdAt: Date
-  updatedAt: Date
+/**
+ * Type Definitions Index
+ * Central export point for all TypeScript type definitions
+ */
+
+// Re-export all Firebase types
+export * from './firebase'
+
+// Re-export component types if any
+export * from './components'
+
+// Application-specific types
+export interface LoadingState {
+  isLoading: boolean
+  error?: string
 }
 
-export interface Property {
-  id: string
-  landlordId: string
-  title: string
-  description: string
-  propertyType: 'apartment' | 'house' | 'condo' | 'townhouse' | 'studio' | 'room' | 'commercial'
-  address: {
-    street: string
-    city: string
-    state: string
-    zipCode: string
-    country: string
-    coordinates?: {
-      lat: number
-      lng: number
-    }
-  }
-  details: {
-    bedrooms?: number
-    bathrooms?: number
-    squareFootage?: number
-    yearBuilt?: number
-    parkingSpaces?: number
-    petPolicy: 'allowed' | 'not-allowed' | 'cats-only' | 'dogs-only'
-    furnished: boolean
-    availableDate: string
-  }
-  pricing: {
-    monthlyRent: number
-    securityDeposit: number
-    applicationFee?: number
-    brokerFee?: number
-    utilities?: {
-      electricity: boolean
-      water: boolean
-      gas: boolean
-      internet: boolean
-      cable: boolean
-    }
-  }
-  media: {
-    images: string[]
-    virtualTour?: string
-    floorPlan?: string
-  }
-  amenities: string[]
-  nearbyFeatures: string[]
-  rules: string[]
-  documents: {
-    lease?: string
-    propertyDisclosure?: string
-    certificates?: string[]
-  }
-  status: 'draft' | 'pending' | 'approved' | 'rejected' | 'inactive'
-  availability: 'available' | 'rented' | 'pending' | 'maintenance'
-  viewCount: number
-  featured: boolean
-  createdAt: Date
-  updatedAt: Date
+export interface PaginationState {
+  page: number
+  limit: number
+  total: number
 }
 
-export interface Application {
-  id: string
-  propertyId: string
-  tenantId: string
-  landlordId: string
-  status: 'draft' | 'submitted' | 'under-review' | 'approved' | 'rejected' | 'withdrawn'
-  personalInfo: {
-    fullName: string
-    email: string
-    phone: string
-    dateOfBirth: string
-    emergencyContact: {
-      name: string
-      phone: string
-      relationship: string
-    }
-  }
-  rentalHistory: {
-    currentAddress?: string
-    landlordContact?: string
-    monthlyRent?: number
-    moveInDate?: string
-    moveOutDate?: string
-    reasonForLeaving?: string
-  }[]
-  employment: {
-    employer: string
-    position: string
-    monthlyIncome: number
-    startDate: string
-    supervisorContact?: string
-  }
-  financialInfo: {
-    bankName?: string
-    accountType?: string
-    creditScore?: number
-    monthlyDebts?: number
-    additionalIncome?: number
-  }
-  references: {
-    name: string
-    relationship: string
-    phone: string
-    email?: string
-  }[]
-  documents: {
-    idVerification: string
-    incomeProof: string
-    bankStatements?: string[]
-    references?: string[]
-    additionalDocs?: string[]
-  }
-  preferences: {
-    moveInDate: string
-    leaseTerm: string
-    additionalOccupants?: {
-      name: string
-      relationship: string
-      dateOfBirth: string
-    }[]
-    pets?: {
-      type: string
-      breed: string
-      weight: number
-      name: string
-    }[]
-  }
-  landlordNotes?: string
-  adminNotes?: string
-  communicationHistory: {
-    id: string
-    from: string
-    to: string
-    message: string
-    timestamp: Date
-    read: boolean
-  }[]
-  createdAt: Date
-  updatedAt: Date
+export interface SortState {
+  field: string
+  direction: 'asc' | 'desc'
 }
 
-export interface Lease {
-  id: string
-  propertyId: string
-  tenantId: string
-  landlordId: string
-  applicationId: string
-  status: 'active' | 'expired' | 'terminated' | 'pending'
-  terms: {
-    startDate: string
-    endDate: string
-    monthlyRent: number
-    securityDeposit: number
-    lateFeePeriod: number
-    lateFeeAmount: number
-    renewalOption: boolean
-  }
-  payments: {
-    id: string
-    amount: number
-    dueDate: string
-    paidDate?: string
-    status: 'pending' | 'paid' | 'late' | 'failed'
-    method?: string
-    transactionId?: string
-  }[]
-  maintenanceRequests: MaintenanceRequest[]
-  documents: {
-    signedLease: string
-    moveInInspection?: string
-    moveOutInspection?: string
-    keyHandover?: string
-  }
-  createdAt: Date
-  updatedAt: Date
+export interface FilterState {
+  [key: string]: any
 }
 
-export interface MaintenanceRequest {
-  id: string
-  propertyId: string
-  tenantId: string
-  landlordId: string
-  leaseId?: string
-  title: string
-  description: string
-  category: 'plumbing' | 'electrical' | 'hvac' | 'appliances' | 'structural' | 'cosmetic' | 'other'
-  priority: 'low' | 'medium' | 'high' | 'emergency'
-  status: 'open' | 'in-progress' | 'completed' | 'cancelled'
-  images?: string[]
-  assignedTo?: string
-  estimatedCost?: number
-  actualCost?: number
-  scheduledDate?: string
-  completedDate?: string
-  tenantNotes?: string
-  landlordNotes?: string
-  contractorNotes?: string
-  createdAt: Date
-  updatedAt: Date
+// Form validation types
+export interface ValidationError {
+  field: string
+  message: string
 }
 
-export interface Payment {
-  id: string
-  leaseId: string
-  tenantId: string
-  landlordId: string
-  amount: number
-  type: 'rent' | 'security-deposit' | 'late-fee' | 'utility' | 'other'
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'refunded'
-  method: 'credit-card' | 'bank-transfer' | 'cash' | 'check' | 'online'
-  dueDate: string
-  paidDate?: string
-  description?: string
-  receiptUrl?: string
-  transactionId?: string
-  createdAt: Date
-  updatedAt: Date
+export interface FormState<T> {
+  data: T
+  errors: ValidationError[]
+  isValid: boolean
+  isDirty: boolean
+  isSubmitting: boolean
 }
 
-export interface PropertyFilters {
-  propertyType?: string[]
-  priceRange?: [number, number]
-  bedrooms?: number[]
-  bathrooms?: number[]
-  location?: string
-  amenities?: string[]
-  petPolicy?: string[]
-  furnished?: boolean
-  availableDate?: string
-  sortBy?: 'price-asc' | 'price-desc' | 'date-newest' | 'date-oldest' | 'relevance'
+// Navigation and routing types
+export interface NavigationItem {
+  label: string
+  href: string
+  icon?: React.ComponentType
+  children?: NavigationItem[]
 }
+
+// Theme and UI types
+export type Theme = 'light' | 'dark' | 'system'
+
+export interface ThemeContextType {
+  theme: Theme
+  setTheme: (theme: Theme) => void
+}
+
+// Notification types
+export type NotificationType = 'success' | 'error' | 'warning' | 'info'
 
 export interface Notification {
   id: string
-  userId: string
+  type: NotificationType
   title: string
   message: string
-  type: 'info' | 'success' | 'warning' | 'error'
-  category: 'application' | 'payment' | 'maintenance' | 'lease' | 'system'
-  read: boolean
-  actionUrl?: string
-  metadata?: Record<string, any>
-  createdAt: Date
+  duration?: number
+  actions?: NotificationAction[]
 }
 
-export interface Analytics {
-  propertyViews: number
-  applications: number
-  leases: number
-  revenue: number
-  occupancyRate: number
-  averageRent: number
-  maintenanceRequests: number
-  period: 'day' | 'week' | 'month' | 'year'
+export interface NotificationAction {
+  label: string
+  action: () => void
 }
+
+// Auth context types
+export interface AuthContextType {
+  user: any | null
+  firebaseUser: any
+  loading: boolean
+  login: (email: string, password: string) => Promise<void>
+  register: (email: string, password: string, userData: any) => Promise<void>
+  logout: () => Promise<void>
+  updateProfile: (userData: any) => Promise<void>
+  isAuthenticated: () => boolean
+}
+
+// Query and mutation types
+export interface QueryOptions {
+  enabled?: boolean
+  refetchOnMount?: boolean
+  refetchOnWindowFocus?: boolean
+  staleTime?: number
+  cacheTime?: number
+}
+
+export interface MutationOptions<T, V> {
+  onSuccess?: (data: T) => void
+  onError?: (error: Error) => void
+  onSettled?: (data: T | undefined, error: Error | null) => void
+}
+
+// File upload types
+export interface UploadProgress {
+  loaded: number
+  total: number
+  percentage: number
+}
+
+export interface FileUploadResult {
+  url: string
+  name: string
+  size: number
+}
+
+// Search and discovery types
+export interface SearchResult<T> {
+  items: T[]
+  total: number
+  hasMore: boolean
+  nextCursor?: string
+}
+
+export interface AutocompleteOption {
+  value: string
+  label: string
+  category?: string
+}
+
+// Map and location types
+export interface Coordinates {
+  latitude: number
+  longitude: number
+}
+
+export interface LocationInfo {
+  address: string
+  city: string
+  state: string
+  country: string
+  coordinates?: Coordinates
+}
+
+// Payment and billing types
+export interface PaymentMethod {
+  id: string
+  type: 'card' | 'bank_transfer' | 'ussd'
+  last4?: string
+  brand?: string
+  isDefault: boolean
+}
+
+export interface Transaction {
+  id: string
+  amount: number
+  currency: string
+  status: 'pending' | 'completed' | 'failed' | 'refunded'
+  description: string
+  createdAt: string
+  paymentMethod: PaymentMethod
+}
+
+// Export commonly used utility types
+export type Nullable<T> = T | null
+export type Optional<T> = T | undefined
+export type PartialExcept<T, K extends keyof T> = Partial<T> & Pick<T, K>
+export type RequiredExcept<T, K extends keyof T> = Required<T> & Partial<Pick<T, K>>

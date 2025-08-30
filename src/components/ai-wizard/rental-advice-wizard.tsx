@@ -240,22 +240,24 @@ export default function RentalAdviceWizard({ isOpen, onClose, propertyData }: Re
     Object.entries(answers).forEach(([questionId, answerId]) => {
       const question = personalityQuestions.find(q => q.id === questionId)
       const option = question?.options.find(o => o.id === answerId)
-      if (option) {
-        scores[option.personality] += option.weight
+      if (option && option.personality && option.weight) {
+        scores[option.personality] = (scores[option.personality] || 0) + option.weight
       }
     })
 
     const topPersonality = Object.entries(scores).reduce((a, b) => 
-      scores[a[0]] > scores[b[0]] ? a : b
+      (scores[a[0]] || 0) > (scores[b[0]] || 0) ? a : b
     )[0]
 
     setPersonalityResult(topPersonality)
-    setAdvice(personalityProfiles[topPersonality])
+    setAdvice(personalityProfiles[topPersonality] || null)
     setStep('results')
   }
 
   const handleAnswer = (answerId: string) => {
-    const newAnswers = { ...answers, [personalityQuestions[currentQuestion].id]: answerId }
+    const currentQ = personalityQuestions[currentQuestion]
+    if (!currentQ) return
+    const newAnswers = { ...answers, [currentQ.id]: answerId }
     setAnswers(newAnswers)
 
     if (currentQuestion < personalityQuestions.length - 1) {
@@ -374,12 +376,12 @@ export default function RentalAdviceWizard({ isOpen, onClose, propertyData }: Re
 
                   <div className="text-center space-y-4">
                     <h3 className="text-xl font-semibold text-gray-900">
-                      {personalityQuestions[currentQuestion].question}
+                      {personalityQuestions[currentQuestion]?.question || 'Loading...'}
                     </h3>
                   </div>
 
                   <div className="space-y-3">
-                    {personalityQuestions[currentQuestion].options.map((option) => (
+                    {personalityQuestions[currentQuestion]?.options.map((option) => (
                       <motion.button
                         key={option.id}
                         whileHover={{ scale: 1.02 }}

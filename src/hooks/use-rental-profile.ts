@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { db } from '@/lib/firebase'
-import { doc, getDoc, setDoc, onSnapshot, serverTimestamp } from 'firebase/firestore'
+import { doc as firestoreDoc, getDoc, setDoc, onSnapshot, serverTimestamp, DocumentReference } from 'firebase/firestore'
 import { toast } from 'react-hot-toast'
 import { getAuthErrorMessage, logAuthError } from '@/utils/firebase-errors'
 
@@ -98,7 +98,7 @@ export function useRentalProfile() {
     }
 
     const unsubscribe = onSnapshot(
-      doc(db, 'users', user.id, 'rental_profile', 'data'),
+      firestoreDoc(db, 'users', user.id, 'rental_profile', 'data'),
       async (doc) => {
         try {
           if (doc.exists()) {
@@ -195,7 +195,7 @@ export function useRentalProfile() {
             }
             
             // Create the profile in Firebase in the correct nested collection
-            const profileRef = doc(db, 'users', user.id, 'rental_profile', 'data')
+            const profileRef = firestoreDoc(db, 'users', user.id, 'rental_profile', 'data')
             await setDoc(profileRef, newProfile)
             setProfile(newProfile)
           }
@@ -306,7 +306,7 @@ export function useRentalProfile() {
     if (!user) return
 
     try {
-      const docRef = doc(db, 'users', user.id, 'rental_profile', 'data')
+      const docRef = firestoreDoc(db, 'users', user.id, 'rental_profile', 'data')
       const profileData = {
         ...profile,
         ...updates,
@@ -315,7 +315,7 @@ export function useRentalProfile() {
       }
       
       // Calculate completion percentage
-      profileData.completionPercentage = calculateCompletionPercentage(profileData)
+      profileData.completionPercentage = calculateCompletionPercentage(profileData as RentalProfile)
       
       await setDoc(docRef, profileData, { merge: true })
       
@@ -330,7 +330,7 @@ export function useRentalProfile() {
     if (!user) return
 
     try {
-      const docRef = doc(db, 'users', user.id, 'rental_profile', 'data')
+      const docRef = firestoreDoc(db, 'users', user.id, 'rental_profile', 'data')
       const newProfile = {
         fullName: '',
         dateOfBirth: '',
@@ -374,7 +374,7 @@ export function useRentalProfile() {
         ...profileData
       }
       
-      newProfile.completionPercentage = calculateCompletionPercentage(newProfile)
+      newProfile.completionPercentage = calculateCompletionPercentage(newProfile as RentalProfile)
       
       await setDoc(docRef, newProfile)
       

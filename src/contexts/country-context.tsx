@@ -50,14 +50,14 @@ const countries: Country[] = [
 const CountryContext = createContext<CountryContextType | undefined>(undefined)
 
 export function CountryProvider({ children }: { children: ReactNode }) {
-  const [selectedCountry, setSelectedCountry] = useState<Country>(countries[0]) // Default to Nigeria
+  const [selectedCountry, setSelectedCountry] = useState<Country>(countries[0] || { code: 'NG', name: 'Nigeria', flag: '🇳🇬', currency: 'NGN', currencySymbol: '₦' })
 
   const formatPrice = (price: number) => {
-    const currencyConfig = {
-      NG: { style: 'currency', currency: 'NGN', minimumFractionDigits: 0 },
-      GH: { style: 'currency', currency: 'GHS', minimumFractionDigits: 2 },
-      ZA: { style: 'currency', currency: 'ZAR', minimumFractionDigits: 2 },
-      US: { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }
+    const currencyConfig: Record<string, Intl.NumberFormatOptions> = {
+      NG: { style: 'currency' as const, currency: 'NGN', minimumFractionDigits: 0 },
+      GH: { style: 'currency' as const, currency: 'GHS', minimumFractionDigits: 2 },
+      ZA: { style: 'currency' as const, currency: 'ZAR', minimumFractionDigits: 2 },
+      US: { style: 'currency' as const, currency: 'USD', minimumFractionDigits: 2 }
     }
 
     const config = currencyConfig[selectedCountry.code as keyof typeof currencyConfig]

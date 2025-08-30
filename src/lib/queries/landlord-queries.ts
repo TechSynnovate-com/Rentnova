@@ -49,7 +49,7 @@ export function useLandlordProfile(userId: string) {
         )
         const landlordSnapshot = await getDocs(landlordQuery)
         
-        if (!landlordSnapshot.empty) {
+        if (!landlordSnapshot.empty && landlordSnapshot.docs[0]) {
           const landlordDoc = landlordSnapshot.docs[0]
           return {
             id: landlordDoc.id,

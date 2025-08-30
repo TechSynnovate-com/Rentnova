@@ -13,7 +13,7 @@ export default function DebugUser() {
     <div className="fixed bottom-4 left-4 bg-black bg-opacity-80 text-white p-2 rounded text-xs max-w-xs z-50">
       <div><strong>Auth Debug:</strong></div>
       <div>User: {user ? 'Yes' : 'No'}</div>
-      <div>UID: {user?.uid || 'None'}</div>
+      <div>ID: {user?.id || 'None'}</div>
       <div>Email: {user?.email || 'None'}</div>
       <div>Firebase User: {firebaseUser ? 'Yes' : 'No'}</div>
     </div>

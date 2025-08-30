@@ -12,9 +12,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ArrowLeft, MapPin, Home, Square, Bed, Bath, Car, Wifi, Zap, Shield, Camera, Edit, Settings, Users, Calendar, DollarSign, Star, X } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { useState } from 'react'
 import { useCountry } from '@/contexts/country-context'
 import { toast } from 'react-hot-toast'
+import { FirebaseProperty } from '@/types/firebase-schema'
 
 export default function PropertyDetailPage() {
   const params = useParams()
@@ -37,7 +39,7 @@ export default function PropertyDetailPage() {
           ...data,
           createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt),
           updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt)
-        }
+        } as FirebaseProperty
       }
       throw new Error('Property not found')
     },
@@ -132,10 +134,12 @@ export default function PropertyDetailPage() {
               <Card className="bg-white/10 backdrop-blur-sm border-white/20">
                 <CardContent className="p-0">
                   <div className="relative h-96 rounded-lg overflow-hidden">
-                    {property.imageUrls && property.imageUrls.length > 0 ? (
-                      <img
+                    {property.imageUrls && property.imageUrls.length > 0 && property.imageUrls[0] ? (
+                      <Image
                         src={property.imageUrls[0]}
                         alt={`${property.propertyType} in ${property.city}`}
+                        width={800}
+                        height={400}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -212,13 +216,13 @@ export default function PropertyDetailPage() {
                   </div>
 
                   {/* Features */}
-                  {(property.utilities?.length > 0 || property.kitchenFeatures?.length > 0 || property.furnishings?.length > 0) && (
+                  {((property.utilities && property.utilities.length > 0) || (property.kitchenFeatures && property.kitchenFeatures.length > 0) || (property.furnishings && property.furnishings.length > 0)) && (
                     <>
                       <Separator className="bg-white/20" />
                       <div>
                         <h3 className="text-lg font-semibold text-white mb-3">Features & Amenities</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                          {property.utilities?.length > 0 && (
+                          {property.utilities && property.utilities.length > 0 && (
                             <div>
                               <h4 className="font-medium text-purple-300 mb-2">Utilities</h4>
                               <ul className="space-y-1 text-gray-300">
@@ -231,7 +235,7 @@ export default function PropertyDetailPage() {
                               </ul>
                             </div>
                           )}
-                          {property.kitchenFeatures?.length > 0 && (
+                          {property.kitchenFeatures && property.kitchenFeatures.length > 0 && (
                             <div>
                               <h4 className="font-medium text-purple-300 mb-2">Kitchen</h4>
                               <ul className="space-y-1 text-gray-300">
@@ -244,7 +248,7 @@ export default function PropertyDetailPage() {
                               </ul>
                             </div>
                           )}
-                          {property.furnishings?.length > 0 && (
+                          {property.furnishings && property.furnishings.length > 0 && (
                             <div>
                               <h4 className="font-medium text-purple-300 mb-2">Furnishings</h4>
                               <ul className="space-y-1 text-gray-300">
@@ -298,7 +302,7 @@ export default function PropertyDetailPage() {
                   {property.requiresUpfrontDeposit && (
                     <div className="flex items-center justify-between">
                       <span className="text-gray-300">Deposit:</span>
-                      <span className="text-white">{property.depositYears} year{property.depositYears > 1 ? 's' : ''}</span>
+                      <span className="text-white">{property.depositYears} year{(property.depositYears && property.depositYears > 1) ? 's' : ''}</span>
                     </div>
                   )}
                 </CardContent>

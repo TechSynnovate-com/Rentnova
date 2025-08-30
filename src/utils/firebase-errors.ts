@@ -85,7 +85,7 @@ export const getFirebaseErrorMessage = (errorCode: string): string => {
     'unknown': 'An unexpected error occurred. Please try again or contact support if the problem persists.'
   }
 
-  return errorMessages[errorCode] || errorMessages['unknown']
+  return errorMessages[errorCode] || errorMessages['unknown'] || 'An unknown error occurred'
 }
 
 export const getAuthErrorMessage = (error: any): string => {

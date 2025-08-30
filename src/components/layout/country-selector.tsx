@@ -49,13 +49,16 @@ interface CountrySelectorProps {
 }
 
 export function CountrySelector({ onCountryChange, className = '' }: CountrySelectorProps) {
-  const [selectedCountry, setSelectedCountry] = useState<Country>(countries[0]) // Default to Nigeria
+  const [selectedCountry, setSelectedCountry] = useState<Country>(countries[0] || { code: 'NG', name: 'Nigeria', flag: '🇳🇬', currency: 'NGN', currencySymbol: '₦' })
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     // Set Nigeria as default and notify parent
     if (onCountryChange) {
-      onCountryChange(countries[0])
+      const defaultCountry = countries[0]
+      if (defaultCountry) {
+        onCountryChange(defaultCountry)
+      }
     }
   }, [onCountryChange])
 
